@@ -1,0 +1,142 @@
+:root {
+  --footer-h: 80px; /* controls reserved space for the fixed footer */
+}
+
+html,
+body {
+  height: 100%;
+  overflow: hidden; /* prevent page scrolling */
+}
+
+body {
+  background-color: black;
+  color: white;
+  margin: 0;
+  padding: 0;
+}
+
+.content {
+  /* Fit the content into the viewport above the fixed footer */
+  min-height: calc(100vh - var(--footer-h));
+  font-family: 'Codystar', cursive;
+  /* Scale the text to better fill large and small screens */
+  font-size: clamp(22px, 3vw, 42px);
+  line-height: 1.4;
+  padding-bottom: 1vh; /* tiny breathing room inside content */
+  box-sizing: border-box;
+  overflow: hidden; /* avoid inner scrollbars */
+}
+
+.content.wait,
+.content.start {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.content.start {
+  cursor: pointer;
+}
+
+.content.start:hover {
+  color: magenta;
+}
+
+.content.playing {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly; /* fill the viewport vertically */
+  width: 100%;
+  padding: 4vh 5vw;
+  gap: 1vh;
+}
+
+.footer {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: var(--footer-h);
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Poppins', Arial, sans-serif;
+  font-size: 15px;
+  padding: 0 24px;
+  text-align: center;
+  background: black; /* ensure content behind doesn't show through */
+  z-index: 10;
+  box-sizing: border-box;
+  border-top: 1px solid rgba(255,255,255,0.12);
+}
+
+.footer a {
+  color: magenta;
+  text-decoration: none;
+}
+
+.footer a:hover {
+  text-decoration: underline;
+}
+
+marquee.button,
+div.button {
+  cursor: pointer;
+  text-align: center;
+  padding: 10px;
+}
+
+div.button:hover,
+marquee.button:hover {
+  color: magenta;
+}
+
+marquee,
+div.button {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+marquee.count,
+marquee.tempo {
+  padding: 20px 0;
+}
+
+/* Mute toggle button (bottom-left) */
+.mute-btn {
+  position: fixed;
+  left: 12px;
+  bottom: calc(var(--footer-h) + 12px);
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  /* Make the outer circle echo the dotted, neon-like text style */
+  border: 2px dotted currentColor;
+  background: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-family: 'Codystar', cursive;
+  cursor: pointer;
+  z-index: 11;
+  backdrop-filter: blur(4px);
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.08), 0 0 10px rgba(255,255,255,0.08);
+  transition: color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.05s ease;
+}
+
+.mute-btn:hover {
+  border-color: magenta;
+  color: magenta;
+  background: rgba(0, 0, 0, 0.8);
+}
+
+.mute-btn:active {
+  transform: scale(0.96);
+}
