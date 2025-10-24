@@ -2,6 +2,8 @@
 
 import { useEffect, useState, useRef } from 'react';
 import { FiVolume2, FiVolumeX } from 'react-icons/fi';
+import { useRouter } from 'next/navigation';
+
 
 export default function MusicPlayer() {
   const [isPlaying, setIsPlaying] = useState(false);
@@ -10,6 +12,7 @@ export default function MusicPlayer() {
   const [muted, setMuted] = useState(false);
 
   const audioRef = useRef(null);
+  const router = useRouter();
 
   useEffect(() => {
     // Set showWait to false after component mounts
@@ -38,6 +41,12 @@ export default function MusicPlayer() {
       audioRef.current.currentTime = 0;
       audioRef.current.play();
     }
+  };
+
+  const claimEarly = () => {
+    // Stop audio and navigate to the guide page
+    stop();
+    router.push('/earlystart/guide');
   };
 
   const toggleMute = () => {
@@ -71,7 +80,7 @@ export default function MusicPlayer() {
   if (!isPlaying) {
     return (
       <>
-        <audio ref={audioRef} src="/@dusjni - texture 184 (rnb).mp3" muted={muted} />
+        <audio ref={audioRef} src="/texture - 184 (rnb).wav" muted={muted} />
         <div className="content start" onClick={start}>
           Build something you&apos;re proud of, and we&apos;ll put it on a billboard in New York City. Seriously.
         </div>
@@ -89,7 +98,7 @@ export default function MusicPlayer() {
 
   return (
     <>
-      <audio ref={audioRef} src="/@dusjni - texture 184 (rnb).mp3" muted={muted} />
+      <audio ref={audioRef} src="/texture - 184 (rnb).wav" muted={muted} />
       <div className="content playing">
         <marquee scrollAmount={15}>BUILD YOUR PROJECTS</marquee>
         <marquee scrollAmount={15} direction="right">50 SPOTS FOR TEENAGERS</marquee>
@@ -106,7 +115,7 @@ export default function MusicPlayer() {
           {count} PROJECTS SHIPPED
         </marquee>
 
-          <div className="button" onClick={stop}>
+          <div className="button" onClick={claimEarly}>
               CLAIM YOUR SPOT <span style={{color: 'red'}}>EARLY</span>
           </div>
 
@@ -137,7 +146,7 @@ export default function MusicPlayer() {
         aria-label={muted ? 'Unmute music' : 'Mute music'}
         title={muted ? 'Unmute' : 'Mute'}
       >
-        {muted ? <FiVolumeX aria-hidden="true" /> : <FiVolume2 aria-hidden="true" />}
+        {muted ? '🔇' : '🔈'}
       </button>
     </>
   );
