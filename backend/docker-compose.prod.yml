@@ -1,0 +1,77 @@
+version: '3.8'
+
+services:
+  # PostgreSQL database
+  postgres:
+    image: postgres:16-alpine
+    container_name: buildboard-db-prod
+    environment:
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?Database password required}
+      POSTGRES_DB: ${DB_NAME:-buildboard_db}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-postgres}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - buildboard-network
+    restart: always
+
+  # BuildBoard backend API
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: buildboard-api-prod
+    ports:
+      - "${PORT:-8080}:8080"
+    environment:
+      # Environment
+      ENVIRONMENT: production
+
+      # Database
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: ${DB_USER:-postgres}
+      DB_PASSWORD: ${DB_PASSWORD:?Database password required}
+      DB_NAME: ${DB_NAME:-buildboard_db}
+      DB_SSL_MODE: ${DB_SSL_MODE:-require}
+
+      # Server
+      PORT: 8080
+      GIN_MODE: release
+      FRONTEND_URL: ${FRONTEND_URL:?Frontend URL required}
+      BACKEND_URL: ${BACKEND_URL:?Backend URL required}
+
+      # Email (required for production)
+      SMTP_HOST: ${SMTP_HOST:?SMTP host required}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_USERNAME: ${SMTP_USERNAME:?SMTP username required}
+      SMTP_PASSWORD: ${SMTP_PASSWORD:?SMTP password required}
+      FROM_EMAIL: ${FROM_EMAIL:?From email required}
+      FROM_NAME: ${FROM_NAME:-BuildBoard}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - buildboard-network
+    restart: always
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 512M
+        reservations:
+          cpus: '0.5'
+          memory: 256M
+
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  buildboard-network:
+    driver: bridge
