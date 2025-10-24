@@ -140,3 +140,52 @@ marquee.tempo {
 .mute-btn:active {
   transform: scale(0.96);
 }
+
+/* Inline Signup Forms */
+.inline-signup {
+  cursor: default;
+  text-align: center;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.inline-signup input {
+  background: transparent;
+  border: none;
+  border-bottom: 2px dotted currentColor;
+  color: white;
+  font-family: 'Codystar', cursive;
+  font-size: clamp(18px, 2.5vw, 36px);
+  text-align: center;
+  padding: 8px 16px;
+  width: 100%;
+  max-width: 500px;
+  outline: none;
+  transition: border-color 0.2s ease, color 0.2s ease;
+}
+
+.inline-signup input::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.inline-signup input:focus {
+  border-color: magenta;
+  color: magenta;
+}
+
+.inline-signup input:disabled {
+  opacity: 0.5;
+}
+
+.error-text {
+  color: red;
+  font-size: clamp(14px, 1.5vw, 20px);
+  font-family: 'Poppins', Arial, sans-serif;
+}
+
+.signup-button {
+  transition: color 0.2s ease;
+}

@@ -11,6 +11,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 
+	"github.com/buildboard/backend/config"
 	"github.com/buildboard/backend/internal/models"
 	"github.com/buildboard/backend/internal/services"
 )
@@ -19,13 +20,15 @@ import (
 type EarlyStartController struct {
 	DB           *gorm.DB
 	EmailService *services.EmailService
+	Config       *config.Config
 }
 
 // NewEarlyStartController creates a new early start controller instance.
-func NewEarlyStartController(db *gorm.DB, emailService *services.EmailService) *EarlyStartController {
+func NewEarlyStartController(db *gorm.DB, emailService *services.EmailService, cfg *config.Config) *EarlyStartController {
 	return &EarlyStartController{
 		DB:           db,
 		EmailService: emailService,
+		Config:       cfg,
 	}
 }
 
@@ -88,16 +91,15 @@ func (e *EarlyStartController) Signup(c *gin.Context) {
 	if err == nil {
 		// Email exists
 		if existing.IsVerified {
-			// Use generic message for security - don't reveal if email is already verified
-			c.JSON(http.StatusOK, gin.H{"message": "If this email is valid, a verification code has been sent"})
-			return
+			// In development mode, allow re-verification for testing
+			if e.Config == nil || !e.Config.IsDevelopment() {
+				// Production: Use generic message for security - don't reveal if email is already verified
+				c.JSON(http.StatusOK, gin.H{"message": "If this email is valid, a verification code has been sent"})
+				return
+			}
+			// Development: Continue to generate new OTP for testing
 		}
-		// Email exists but not verified - allow resending OTP
-		// Check rate limiting on OTP attempts
-		if existing.OTPLastAttempt != nil && time.Since(*existing.OTPLastAttempt) < 1*time.Minute {
-			c.JSON(http.StatusTooManyRequests, gin.H{"error": "Please wait before requesting a new code"})
-			return
-		}
+		// Email exists but not verified - allow resending OTP without rate limiting
 	} else if err != gorm.ErrRecordNotFound {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Service temporarily unavailable"})
 		return
@@ -174,10 +176,17 @@ func (e *EarlyStartController) Signup(c *gin.Context) {
 		}
 	}
 
-	// Generic success message for security
-	c.JSON(http.StatusOK, gin.H{
+	// Prepare response
+	response := gin.H{
 		"message": "If this email is valid, a verification code has been sent. Please check your email.",
-	})
+	}
+
+	// In development mode, include OTP in response for easier testing
+	if e.Config != nil && e.Config.IsDevelopment() {
+		response["otp"] = otp
+	}
+
+	c.JSON(http.StatusOK, response)
 }
 
 // VerifyOTP verifies the OTP and completes the early start signup.

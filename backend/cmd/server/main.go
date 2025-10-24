@@ -89,7 +89,7 @@ func main() {
 	}
 
 	// Initialize controllers
-	earlyStartCtl := controllers.NewEarlyStartController(database, emailService)
+	earlyStartCtl := controllers.NewEarlyStartController(database, emailService, cfg)
 
 	// Health check endpoint
 	r.GET("/health", func(c *gin.Context) {

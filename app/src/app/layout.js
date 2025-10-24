@@ -12,12 +12,18 @@ export const metadata = {
 };
 
 export default function RootLayout({ children }) {
+  const isDevelopment = process.env.NEXT_PUBLIC_ENV === 'development';
+
   return (
     <html lang="en">
       <head>
         <link href='https://fonts.googleapis.com/css?family=Codystar' rel='stylesheet' />
       </head>
-      <body>
+      <body style={isDevelopment ? {
+        border: '3px dotted red',
+        minHeight: '100vh',
+        boxSizing: 'border-box'
+      } : {}}>
         {children}
       </body>
     </html>
