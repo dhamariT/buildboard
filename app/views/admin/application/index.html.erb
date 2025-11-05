@@ -1,0 +1,26 @@
+<h1>admin view!</h1>
+
+<h2>tasks</h2>
+<div class="button-grid">
+  <% if policy(:admin).users? %>
+    <%= link_to "Users", "/admin/users", class: "btn-primary" %>
+  <% end %>
+
+  <% if policy(:admin).projects? %>
+    <%= link_to "Projects", "/admin/projects", class: "btn-primary" %>
+  <% end %>
+</div>
+
+<h2>dashboards</h2>
+<div class="button-grid">
+  <% if policy(:admin).blazer? %>
+    <%= link_to "Blazer", "/admin/blazer", class: "btn-primary" %>
+  <% end %>
+
+  <% if policy(:admin).flipper? %>
+    <%= link_to "Flipper", "/admin/flipper", class: "btn-primary" %>
+  <% end %>
+
+  <%# todo: replace slack id #%>
+  <%= link_to "Help bot", "https://app.slack.com/client/T0266FRGM/D092Q3PQB7X", class: "btn-primary" %>
+</div>

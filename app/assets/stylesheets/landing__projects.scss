@@ -1,0 +1,17 @@
+.projects {
+    background-color: var(--color-gold);
+    background-image: url('landing/projects/background.png');
+    background-repeat: no-repeat;
+    color: var(--color-brown-dark);
+    padding: 40px 20px;
+    text-align: center;
+
+    .container {
+        background-color: var(--color-cream);
+        border: 2px solid var(--color-tan);
+        border-radius: 10px;
+        margin: 0 auto;
+        max-width: 800px;
+        padding: 30px;
+    }
+}
